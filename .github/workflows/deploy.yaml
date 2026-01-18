@@ -1,9 +1,10 @@
 name: Deploy
 
 on:
-    workflow_run:
-      workflows: ["ci"]
-      types: [completed]
+  workflow_run:
+    workflows: ["ci"]
+    types: [completed]
+
   workflow_dispatch:
     inputs:
       target:
@@ -16,17 +17,22 @@ on:
 jobs:
   deploy_staging:
     name: Deploy to staging
-    if: github.event_name == 'push'
+    if: >
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
     environment: staging
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Create deploy info
         run: |
           echo "env=staging" > deploy-info.txt
           echo "secret_name_is_set=${{ secrets.SECRET_NAME != '' }}" >> deploy-info.txt
-          echo "commit=${{ github.sha }}" >> deploy-info.txt
+          echo "commit=${{ github.event.workflow_run.head_sha }}" >> deploy-info.txt
 
       - name: Upload deploy artifact
         uses: actions/upload-artifact@v4

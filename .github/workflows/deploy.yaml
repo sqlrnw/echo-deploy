@@ -1,0 +1,55 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Where to deploy"
+        required: true
+        type: choice
+        options:
+          - production
+
+jobs:
+  deploy_staging:
+    name: Deploy to staging
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create deploy info
+        run: |
+          echo "env=staging" > deploy-info.txt
+          echo "secret_name_is_set=${{ secrets.SECRET_NAME != '' }}" >> deploy-info.txt
+          echo "commit=${{ github.sha }}" >> deploy-info.txt
+
+      - name: Upload deploy artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-staging
+          path: deploy-info.txt
+
+  deploy_production:
+    name: Deploy to production
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create deploy info
+        run: |
+          echo "env=production" > deploy-info.txt
+          echo "secret_name_is_set=${{ secrets.SECRET_NAME != '' }}" >> deploy-info.txt
+          echo "commit=${{ github.sha }}" >> deploy-info.txt
+
+      - name: Upload deploy artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-production
+          path: deploy-info.txt
+

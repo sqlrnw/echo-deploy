@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   workflow_run:
-    workflows: ["ci"]
+    workflows: ["CI"]
     types: [completed]
 
   workflow_dispatch:
@@ -30,15 +30,15 @@ jobs:
 
       - name: Create deploy info
         run: |
-          echo "env=staging" > deploy-info.txt
-          echo "secret_name_is_set=${{ secrets.SECRET_NAME != '' }}" >> deploy-info.txt
-          echo "commit=${{ github.event.workflow_run.head_sha }}" >> deploy-info.txt
+          echo "env=staging" > deploy-stage-info.txt
+          echo "secret_name_is_set=${{ secrets.SECRET_NAME != '' }}" >> deploy-stage-info.txt
+          echo "commit=${{ github.event.workflow_run.head_sha }}" >> deploy-stage-info.txt
 
       - name: Upload deploy artifact
         uses: actions/upload-artifact@v4
         with:
           name: deploy-staging
-          path: deploy-info.txt
+          path: deploy-stage-info.txt
 
   deploy_production:
     name: Deploy to production

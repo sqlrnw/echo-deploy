@@ -13,7 +13,7 @@
 
 ## 🎯 هدف المشروع
 
-التدريب على شكل **Production-style CI/CD pipeline** بدون:
+التدريب على شكل ***Production-style CI/CD pipeline*** بدون:
 - Docker
 - Cloud
 - Servers حقيقية

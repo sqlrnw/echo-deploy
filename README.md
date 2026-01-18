@@ -6,7 +6,7 @@
 - Environments
 - Secrets
 - Staging vs Production
-- CI gating قبل الـ Deploy
+- ci gating قبل الـ Deploy
 - Manual approval للـ Production
 
 ---
